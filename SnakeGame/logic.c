@@ -15,24 +15,32 @@ void initGame(GameState* game) {
     generateFood(game);
 }
 
+// logic.c 的 generateFood 函式
+
 void generateFood(GameState* game) {
     int valid = 0;
     while (!valid) {
-        valid = 1;
-        game->foodX = (rand() % WIDTH) + 1;
-        game->foodY = (rand() % HEIGHT) + 1;
+        // 【關鍵修改】
+        // 原本可能只有 (rand() % WIDTH)
+        // 改成 (WIDTH - 4) + 2，這代表：
+        // "最左邊空 2 格，最右邊也空 2 格"，絕對不會碰到牆壁！
 
+        game->foodX = (rand() % (WIDTH - 4)) + 2;
+        game->foodY = (rand() % (HEIGHT - 4)) + 2;
+
+        valid = 1;
+
+        // 檢查有沒有長在蛇身上 (防呆機制)
         SnakeNode* current = game->head;
         while (current != NULL) {
             if (current->x == game->foodX && current->y == game->foodY) {
-                valid = 0;
+                valid = 0; // 重疊了，重抽一次
                 break;
             }
             current = current->next;
         }
     }
 }
-
 void updateSnake(GameState* game) {
     int newX = game->head->x;
     int newY = game->head->y;
@@ -44,11 +52,17 @@ void updateSnake(GameState* game) {
     case RIGHT: newX++; break;
     }
 
-    if (newX <= 0 || newX >= WIDTH + 1 || newY <= 0 || newY >= HEIGHT + 1) {
-        game->isGameOver = 1;
-        return;
-    }
+    // 檢查撞牆 (配合 view.c 的牆壁位置)
+        // view.c 的牆壁在 0 和 WIDTH+1，所以我們要這些地方設為禁區
+// logic.c 的 updateSnake 函式裡面
 
+    // 【修正後】檢查 "下一步 (newX, newY)" 會不會撞牆
+    if (newX <= 0 || newX >= WIDTH + 1 ||
+        newY <= 0 || newY >= HEIGHT + 1) {
+
+        game->isGameOver = 1;
+        return; // 【關鍵！】直接結束函式，絕對不要讓下面的程式碼把蛇移到牆壁上！
+    }
     SnakeNode* current = game->head;
     while (current != NULL) {
         if (current->x == newX && current->y == newY) {

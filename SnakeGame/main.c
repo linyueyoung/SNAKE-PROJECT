@@ -19,6 +19,8 @@ int main() {
     initGame(&game);
     drawBorder();
 
+    // --- 請把 main.c 裡的 while 迴圈換成這一段 ---
+
     while (!game.isGameOver) {
         if (_kbhit()) {
             char key = _getch();
@@ -30,21 +32,33 @@ int main() {
             }
         }
 
+        // 1. 【關鍵！】先記住還沒移動前的「舊尾巴」座標
+        int oldTailX = -1, oldTailY = -1;
+        if (game.tail != NULL) {
+            oldTailX = game.tail->x;
+            oldTailY = game.tail->y;
+        }
+
+        // 2. 蛇開始移動 (更新資料)
         updateSnake(&game);
 
+        // 3. 畫出新位置的蛇、食物、分數
         if (!game.isGameOver) {
             drawSnake(&game);
             drawFood(game.foodX, game.foodY);
             drawScore(game.score);
 
-            if (game.tail != NULL && game.head->x != game.foodX) {
-                clearTail(game.tail->x, game.tail->y);
+            // 4. 【關鍵！】如果蛇移動了（尾巴座標變了），才把「舊尾巴」擦掉
+            // 這樣就不會留下殘影，也不會誤刪剛長出來的尾巴
+            if (game.tail != NULL) {
+                if (oldTailX != -1 && (game.tail->x != oldTailX || game.tail->y != oldTailY)) {
+                    clearTail(oldTailX, oldTailY);
+                }
             }
-
-            Sleep(100);
         }
-    }
 
+        Sleep(100); // 控制速度
+    }
     saveHighScore(game.score);
     freeSnake(&game);
 
@@ -57,5 +71,6 @@ int main() {
     while (1) {
         if (_kbhit()) break;
     }
+    system("pause");
     return 0;
 }
