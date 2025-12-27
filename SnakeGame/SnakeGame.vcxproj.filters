@@ -15,8 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SnakeGame.cpp">
+    <ClCompile Include="view.c">
       <Filter>來源檔案</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="view.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
