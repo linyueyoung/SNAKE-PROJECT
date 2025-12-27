@@ -15,10 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="file.c">
     <ClCompile Include="view.c">
     <ClCompile Include="logic.c">
       <Filter>來源檔案</Filter>
     </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="file.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="view.h">
